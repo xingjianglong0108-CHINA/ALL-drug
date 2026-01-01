@@ -1,0 +1,5 @@
+{
+  "name": "ALL药物基因组学决策辅助工具",
+  "description": "A clinical decision support application for Acute Lymphoblastic Leukemia (ALL) medication management based on MTHFR, CEP72, NUDT15, SLCO1B1, and TPMT genetic testing results. Features iOS-style glassmorphism UI and deterministic medical logic.",
+  "requestFramePermissions": []
+}
