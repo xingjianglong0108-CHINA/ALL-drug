@@ -5,6 +5,7 @@ export const GENE_DATA: GeneInfo[] = [
   {
     gene: 'MTHFR',
     description: '叶酸代谢相关，关联 MTX 相关的黏膜炎及骨髓抑制风险',
+    themeColor: 'blue',
     snps: [
       { id: 'mthfr_677', name: 'C677T', options: ['CC', 'CT', 'TT'], defaultValue: 'CC' },
       { id: 'mthfr_1298', name: 'A1298C', options: ['AA', 'AC', 'CC'], defaultValue: 'AA' }
@@ -13,6 +14,7 @@ export const GENE_DATA: GeneInfo[] = [
   {
     gene: 'SLCO1B1',
     description: '药物转运相关，影响 MTX 排泄延迟及全身毒性风险',
+    themeColor: 'indigo',
     snps: [
       { id: 'slco1b1_521', name: 'T521C', options: ['TT', 'TC', 'CC'], defaultValue: 'TT' }
     ]
@@ -20,6 +22,7 @@ export const GENE_DATA: GeneInfo[] = [
   {
     gene: 'CEP72',
     description: '关联长春新碱 (VCR) 诱导的周围神经病变风险',
+    themeColor: 'cyan',
     snps: [
       { id: 'cep72_rs924607', name: 'rs924607', options: ['CC', 'CT', 'TT'], defaultValue: 'CC' }
     ]
@@ -27,6 +30,7 @@ export const GENE_DATA: GeneInfo[] = [
   {
     gene: 'NUDT15',
     description: '关联巯嘌呤 (6-MP/6-TG) 诱导的严重骨髓抑制及脱发',
+    themeColor: 'violet',
     snps: [
       { id: 'nudt15_415', name: 'C415T (*3)', options: ['CC', 'CT', 'TT'], defaultValue: 'CC' }
     ]
@@ -34,6 +38,7 @@ export const GENE_DATA: GeneInfo[] = [
   {
     gene: 'TPMT',
     description: '关联巯嘌呤代谢，影响中性粒细胞减少及骨髓毒性',
+    themeColor: 'pink',
     snps: [
       { id: 'tpmt_238', name: 'G238C (*2)', options: ['GG', 'GC', 'CC'], defaultValue: 'GG' },
       { id: 'tpmt_460', name: 'G460A (*3B)', options: ['GG', 'GA', 'AA'], defaultValue: 'GG' },

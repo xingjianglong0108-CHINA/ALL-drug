@@ -11,6 +11,7 @@ export interface SNP {
 export interface GeneInfo {
   gene: string;
   description: string;
+  themeColor: string; // TailWind color class prefix like 'blue', 'purple', etc.
   snps: SNP[];
 }
 

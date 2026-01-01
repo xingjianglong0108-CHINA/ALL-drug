@@ -22,104 +22,122 @@ const App: React.FC = () => {
     setState(prev => ({ ...prev, [snpId]: value }));
   };
 
-  return (
-    <div className="min-h-screen py-10 px-4 md:px-8">
-      <div className="max-w-5xl mx-auto space-y-8">
-        
-        {/* Header */}
-        <header className="text-center mb-12">
-          <div className="inline-block px-4 py-1.5 mb-4 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-700 font-semibold text-xs tracking-widest uppercase">
-            Pharmacogenomics Tool
-          </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-2">
-            ALL 药物基因组学
-          </h1>
-          <p className="text-slate-500 text-lg">临床决策辅助工具 v1.0 (基于 NCCN & CPIC 指南)</p>
-        </header>
+  const getThemeStyles = (color: string) => {
+    const maps: Record<string, { bg: string, border: string, text: string, light: string }> = {
+      blue: { bg: 'bg-blue-50/30', border: 'border-blue-400/60', text: 'text-blue-500', light: 'from-blue-50/60' },
+      indigo: { bg: 'bg-indigo-50/30', border: 'border-indigo-400/60', text: 'text-indigo-500', light: 'from-indigo-50/60' },
+      cyan: { bg: 'bg-cyan-50/30', border: 'border-cyan-400/60', text: 'text-cyan-500', light: 'from-cyan-50/60' },
+      violet: { bg: 'bg-violet-50/30', border: 'border-violet-400/60', text: 'text-violet-500', light: 'from-violet-50/60' },
+      pink: { bg: 'bg-pink-50/40', border: 'border-pink-300/60', text: 'text-pink-400', light: 'from-pink-50/80' },
+      rose: { bg: 'bg-rose-50/30', border: 'border-rose-300/60', text: 'text-rose-400', light: 'from-rose-50/60' }
+    };
+    return maps[color] || maps.blue;
+  };
 
-        {/* Input Table */}
-        <GlassCard title="检测结果录入 (基因检测报告)" className="animate-in fade-in duration-700">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-slate-200/50">
-                  <th className="py-4 px-4 text-slate-500 font-semibold text-sm uppercase tracking-wider">基因</th>
-                  <th className="py-4 px-4 text-slate-500 font-semibold text-sm uppercase tracking-wider">SNP 位点</th>
-                  <th className="py-4 px-4 text-slate-500 font-semibold text-sm uppercase tracking-wider">基因型</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100/50">
-                {GENE_DATA.map((geneGroup) => (
-                  <React.Fragment key={geneGroup.gene}>
-                    {geneGroup.snps.map((snp, index) => (
-                      <tr key={snp.id} className="hover:bg-white/30 transition-colors">
-                        {index === 0 && (
-                          <td 
-                            className="py-4 px-4 align-top" 
-                            rowSpan={geneGroup.snps.length}
-                          >
-                            <div className="font-bold text-slate-700 text-lg mb-1">{geneGroup.gene}</div>
-                            <div className="text-xs text-slate-400 font-normal leading-relaxed max-w-[180px]">
-                              {geneGroup.description}
-                            </div>
-                          </td>
-                        )}
-                        <td className="py-4 px-4 text-slate-600 font-medium">
-                          {snp.name}
-                        </td>
-                        <td className="py-4 px-4">
-                          <div className="relative">
-                            <select
-                              value={state[snp.id]}
-                              onChange={(e) => handleSnpChange(snp.id, e.target.value)}
-                              className="w-full md:w-48 bg-white/80 border border-slate-200 rounded-lg px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm cursor-pointer appearance-none"
-                              style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '1rem' }}
-                            >
-                              {snp.options.map(opt => (
-                                <option key={opt} value={opt}>{opt}</option>
-                              ))}
-                            </select>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
+  return (
+    <div className="max-w-[800px] mx-auto py-12 px-5 antialiased">
+      {/* App Header */}
+      <header className="mb-10 pl-1">
+        <p className="text-[#007aff] text-[13px] font-bold tracking-wider uppercase mb-1">PGx Clinical Support</p>
+        <h1 className="text-[34px] font-extrabold tracking-tight text-[#1c1c1e] mb-2">ALL 药物基因组学</h1>
+        <div className="flex items-center gap-3">
+          <p className="text-[#8e8e93] text-[17px] font-medium leading-tight">基于基因检测报告的临床用药决策辅助</p>
+          <span className="text-[11px] px-1.5 py-0.5 rounded bg-black/5 text-[#8e8e93]/70 font-bold tracking-widest uppercase border border-black/5">LZRYEK</span>
+        </div>
+      </header>
+
+      <div className="space-y-10">
+        {/* Detection Inputs - Enhanced Themed Groups */}
+        <section>
+          <div className="flex items-end justify-between px-1 mb-3">
+             <h3 className="text-[13px] font-medium text-[#8e8e93] uppercase tracking-wide">基因检测结果录入</h3>
           </div>
-        </GlassCard>
+          
+          <div className="space-y-4">
+            {GENE_DATA.map((geneGroup) => {
+              const styles = getThemeStyles(geneGroup.themeColor);
+              return (
+                <div 
+                  key={geneGroup.gene} 
+                  className={`relative overflow-hidden rounded-[22px] border border-white/60 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all hover:shadow-[0_8px_24px_rgba(0,0,0,0.04)] ${styles.bg}`}
+                >
+                  {/* Left Accent Bar */}
+                  <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${styles.border.split('/')[0].replace('border-', 'bg-')}`}></div>
+                  
+                  {/* Gene Header Row */}
+                  <div className={`px-6 py-4 bg-gradient-to-r ${styles.light} to-transparent border-b border-black/[0.03]`}>
+                    <div className="flex items-center gap-3">
+                       <span className={`text-[18px] font-extrabold tracking-tight ${styles.text}`}>{geneGroup.gene}</span>
+                       <span className="h-3 w-[1px] bg-black/10"></span>
+                       <span className="text-[13px] text-[#8e8e93] font-medium">{geneGroup.description}</span>
+                    </div>
+                  </div>
+
+                  {/* SNPs List */}
+                  <div className="divide-y divide-black/[0.03]">
+                    {geneGroup.snps.map((snp) => (
+                      <div key={snp.id} className="flex items-center justify-between py-3.5 px-6 hover:bg-white/40 transition-colors">
+                        <label htmlFor={snp.id} className="text-[15px] font-semibold text-[#3a3a3c]">{snp.name}</label>
+                        <div className="relative flex items-center">
+                          <select
+                            id={snp.id}
+                            value={state[snp.id]}
+                            onChange={(e) => handleSnpChange(snp.id, e.target.value)}
+                            className={`appearance-none bg-white/60 border border-black/5 rounded-[12px] px-4 py-1.5 pr-8 text-[15px] font-bold ${styles.text} focus:ring-4 focus:ring-current/10 cursor-pointer transition-all min-w-[110px] text-right shadow-sm`}
+                          >
+                            {snp.options.map(opt => (
+                              <option key={opt} value={opt}>{opt}</option>
+                            ))}
+                          </select>
+                          <div className={`absolute right-2.5 pointer-events-none ${styles.text}`}>
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
 
         {/* Recommendations Section */}
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04m7.733 12.91a1 1 0 00.17.3c.047.058.05.02.062.126a1 1 0 00.18.322l.262.262a1 1 0 00.672.223.999.999 0 00.672-.223l.262-.262a1 1 0 00.18-.322.992.992 0 00.062-.126 1.001 1.001 0 00.17-.3m-10.333-5.714a11.969 11.969 0 018.167 6.835m0 0a11.969 11.969 0 018.167-6.835" />
-              </svg>
-              决策建议
-            </h2>
-            <span className="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-md">实时更新</span>
+        <section className="space-y-4">
+          <div className="flex items-end justify-between px-1">
+             <h3 className="text-[13px] font-medium text-[#8e8e93] uppercase tracking-wide">决策建议</h3>
+             <span className="flex items-center gap-1.5 text-[12px] text-[#34c759] font-bold">
+               <span className="w-1.5 h-1.5 rounded-full bg-[#34c759] animate-pulse"></span>
+               实时分析中
+             </span>
           </div>
 
-          <div className="grid gap-6">
+          <div className="space-y-4">
             {recommendations.length > 0 ? (
               recommendations.map((rec, i) => (
-                <div key={i} className={`transform transition-all duration-500 translate-y-0 animate-in fade-in slide-in-from-bottom-4`}>
+                <div key={i} className="list-item-enter" style={{ animationDelay: `${i * 0.1}s` }}>
                   <RecommendationCard recommendation={rec} />
                 </div>
               ))
             ) : (
-              <GlassCard className="text-center py-12">
-                <div className="text-slate-400 text-lg">当前选择下所有代谢均为正常，暂无特殊调剂建议。</div>
+              <GlassCard className="text-center py-10">
+                <div className="text-[#8e8e93] text-[15px]">所有检测项均为野生型或正常代谢，无需特殊剂量调整。</div>
               </GlassCard>
             )}
           </div>
-        </div>
+        </section>
 
-        {/* Footer Disclaimer */}
-        <footer className="mt-16 text-center text-slate-400 text-sm max-w-2xl mx-auto border-t border-slate-200/50 pt-8 pb-10">
-          注意：本工具仅供临床医生参考。具体用药方案必须结合患者临床特征（年龄、疾病风险分层、肝肾功能等）及其他实验室检查结果综合判断。
+        {/* Info Disclaimer */}
+        <footer className="pt-10 pb-20 border-t border-black/[0.05] text-center space-y-2">
+          <p className="text-[12px] text-[#8e8e93] leading-relaxed max-w-md mx-auto">
+            本工具遵循 NCCN/CPIC 指南。所有临床决策均需结合患者实际肝肾功能、年龄及化疗反应，由主治医师确认。
+          </p>
+          <div className="flex justify-center gap-4 text-[11px] font-bold text-[#007aff] uppercase tracking-tighter">
+            <span>v1.0.5 Release</span>
+            <span>Clinical Support System</span>
+          </div>
         </footer>
       </div>
     </div>
@@ -128,41 +146,59 @@ const App: React.FC = () => {
 
 const RecommendationCard: React.FC<{ recommendation: Recommendation }> = ({ recommendation }) => {
   const styles = {
-    info: 'border-blue-200 bg-blue-50/40 text-blue-700',
-    warning: 'border-amber-200 bg-amber-50/40 text-amber-700',
-    danger: 'border-rose-200 bg-rose-50/40 text-rose-700'
+    info: {
+      bg: 'bg-white/80',
+      border: 'border-[#007aff]/10',
+      accent: 'text-[#007aff]',
+      iconBg: 'bg-[#007aff]/10',
+      tag: 'bg-[#007aff] text-white'
+    },
+    warning: {
+      bg: 'bg-[#fff9f0]/90',
+      border: 'border-[#ff9500]/20',
+      accent: 'text-[#ff9500]',
+      iconBg: 'bg-[#ff9500]/10',
+      tag: 'bg-[#ff9500] text-white'
+    },
+    danger: {
+      bg: 'bg-[#fff2f2]/90',
+      border: 'border-[#ff3b30]/20',
+      accent: 'text-[#ff3b30]',
+      iconBg: 'bg-[#ff3b30]/10',
+      tag: 'bg-[#ff3b30] text-white'
+    }
   }[recommendation.level];
 
   const icons = {
-    info: (
-      <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" /></svg>
-    ),
-    warning: (
-      <svg className="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
-    ),
-    danger: (
-      <svg className="w-5 h-5 text-rose-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" /></svg>
-    )
+    info: <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />,
+    warning: <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />,
+    danger: <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
   };
 
   return (
-    <div className={`p-6 rounded-2xl border-2 shadow-sm backdrop-blur-md ${styles}`}>
+    <div className={`${styles.bg} backdrop-blur-[20px] rounded-[24px] border ${styles.border} p-6 shadow-[0_4px_20px_rgba(0,0,0,0.04)] relative overflow-hidden group`}>
       <div className="flex items-start gap-4">
-        <div className="mt-1 p-2 rounded-xl bg-white/50">{icons[recommendation.level]}</div>
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
-            <h3 className="text-xl font-bold uppercase tracking-tight">{recommendation.drug}</h3>
-            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-white/40 border border-current opacity-80`}>
-              {recommendation.level}
+        <div className={`p-3 rounded-2xl ${styles.iconBg} ${styles.accent} transition-transform group-hover:scale-110 duration-300`}>
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+            {icons[recommendation.level]}
+          </svg>
+        </div>
+        <div className="flex-1 space-y-3">
+          <div className="flex items-center gap-2">
+            <h4 className="text-[20px] font-bold tracking-tight text-[#1c1c1e]">{recommendation.drug}</h4>
+            <span className={`px-2 py-0.5 rounded-[6px] text-[10px] font-black uppercase tracking-widest ${styles.tag}`}>
+              {recommendation.level === 'danger' ? 'High Risk' : recommendation.level === 'warning' ? 'Monitor' : 'Notice'}
             </span>
           </div>
-          <div className="mb-3">
-            <span className="text-xs font-semibold opacity-70 uppercase tracking-wide block mb-1">发现:</span>
-            <p className="font-medium text-slate-800">{recommendation.finding}</p>
+          
+          <div className="space-y-1">
+            <p className="text-[13px] font-bold text-[#8e8e93] uppercase tracking-wide">基因型发现</p>
+            <p className="text-[16px] text-[#3a3a3c] font-medium leading-snug">{recommendation.finding}</p>
           </div>
-          <div>
-            <span className="text-xs font-semibold opacity-70 uppercase tracking-wide block mb-1">调整建议:</span>
-            <p className="text-slate-900 leading-relaxed font-semibold">{recommendation.suggestion}</p>
+
+          <div className="pt-3 border-t border-black/5">
+            <p className="text-[13px] font-bold text-[#8e8e93] uppercase tracking-wide mb-1">调整方案</p>
+            <p className="text-[17px] text-[#1c1c1e] font-bold leading-relaxed">{recommendation.suggestion}</p>
           </div>
         </div>
       </div>
